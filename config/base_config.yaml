@@ -1,0 +1,13 @@
+data_paths:
+  raw_data: '../data/AmesHousing.csv'
+  X_test: '../data/X_test_scaled.csv'
+  y_test: '../data/y_test.csv'
+
+model_output_paths:
+  dir: '../models'
+  model: '../models/lightgbm.joblib'
+  scaler: '../models/lightgbm_scaler.joblib'
+
+cols_to_fill:
+  categorical: ['Pool QC', 'Misc Feature', 'Alley', 'Fence', 'Mas Vnr Type', 'Fireplace Qu', 'Garage Cond', 'Garage Finish', 'Garage Qual', 'Garage Type', 'Bsmt Exposure', 'BsmtFin Type 2', 'Bsmt Qual', 'Bsmt Cond', 'BsmtFin Type 1', 'Bsmt Full Bath', 'Bsmt Half Bath']
+  numerical: ['Garage Yr Blt', 'Mas Vnr Area']
