@@ -31,7 +31,6 @@ def preprocess_data(config):
 
     print(X_train.head())
 
-
 def handle_missing_values(data, config):
     data = data.drop(['PID'], axis=1)
     cols_to_fill = config['cols_to_fill']
@@ -65,20 +64,20 @@ def feature_engineering(data, config):
 
 def enhance_features(op, data, feature):
     if op == 'sum':
-        data[feature['new']] = data[feature['old']].sum(axis=1)
+        data[feature['new_name']] = data[feature['old']].sum(axis=1)
         drop_columns = feature['old']
     elif op == 'weighted_sum':
         weights = pd.Series(feature['old'])
-        data[feature['new']] = (data[weights.index] * weights).sum(axis=1)
+        data[feature['new_name']] = (data[weights.index] * weights).sum(axis=1)
         drop_columns = weights.index
     elif op == 'difference':
-        data[feature['new']] = data[feature['minuend']] - data[feature['subtrahend']]
+        data[feature['new_name']] = data[feature['minuend']] - data[feature['subtrahend']]
         drop_columns = [feature['minuend'], feature['subtrahend']]
     elif op == 'unequal':
-        data[feature['new']] = data[feature['first_operand']] != data[feature['second_operand']]
+        data[feature['new_name']] = data[feature['first_operand']] != data[feature['second_operand']]
         drop_columns = [feature['first_operand'], feature['second_operand']]
     elif op == 'greater_than_zero':
-        data[feature['new']] = data[feature['operand']] > 0
+        data[feature['new_name']] = data[feature['operand']] > 0
         drop_columns = [feature['operand']]
     else:
         raise ValueError("The operation is not yet supported.")

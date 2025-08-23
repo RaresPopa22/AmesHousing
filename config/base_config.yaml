@@ -15,44 +15,44 @@ cols_to_fill:
 feature_engineering:
   surface:
     op: 'sum'
-    new: 'Total SF'
+    new_name: 'Total SF'
     old: ['Total Bsmt SF', '1st Flr SF', '2nd Flr SF']
   bath:
     op: 'weighted_sum'
-    new: 'Total Bath'
+    new_name: 'Total Bath'
     old: {'Full Bath': 1, 'Bsmt Full Bath': 1, 'Half Bath': 0.5, 'Bsmt Half Bath': 0.5}
   porch:
     op: 'sum'
-    new: 'Total Porch'
+    new_name: 'Total Porch'
     old: ['Open Porch SF', 'Enclosed Porch', '3Ssn Porch', 'Screen Porch']
   age:
     op: 'difference'
-    new: 'House Age'
+    new_name: 'House Age'
     minuend: 'Yr Sold'
     subtrahend: 'Year Built'
   remod:
     op: 'difference'
-    new: 'Years Since Remod'
+    new_name: 'Years Since Remod'
     minuend: 'Yr Sold'
     subtrahend: 'Year Remod/Add'
   was_remod:
     op: 'unequal'
-    new: 'Was Remodeled'
+    new_name: 'Was Remodeled'
     first_operand: 'Year Remod/Add'
     second_operand: 'Year Built'
   has_pool:
     op: 'greater_than_zero'
-    new: 'Has Pool'
+    new_name: 'Has Pool'
     operand: 'Pool Area'
   has_second_floor:
     op: 'greater_than_zero'
-    new: 'Has Second Floor'
+    new_name: 'Has Second Floor'
     operand: '2nd Flr SF'
   has_garage:
     op: 'greater_than_zero'
-    new: 'Has Garage'
+    new_name: 'Has Garage'
     operand: 'Garage Area'
   has_bsmt:
     op: 'greater_than_zero'
-    new: 'Has Bsmt'
+    new_name: 'Has Bsmt'
     operand: 'Total Bsmt SF'
