@@ -1,6 +1,9 @@
 import pandas as pd
 import yaml
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
 
 def read_config(path):
     with open(path, 'r') as f:
@@ -9,18 +12,28 @@ def read_config(path):
     return config
 
 def load_dataset(config):
-    print(config['data_paths']['raw_data'])
     return pd.read_csv(config['data_paths']['raw_data'])
 
 def preprocess_data(config):
     data = load_dataset(config)
-    data = data.drop(['PID'], axis=1)
-    data = handle_missing_values(data, config)
 
-    print(data.head())
+    X = data.drop('SalePrice', axis=1)
+    y = data['SalePrice']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+    X_train = handle_missing_values(X_train, config)
+    X_train = feature_engineering(X_train, config)
+
+    # scaler = StandardScaler()
+    # X_train_scaled = scaler.fit_transform(X_train)
+    # X_test_scaled = scaler.transform(X_test)
+
+    print(X_train.head())
 
 
 def handle_missing_values(data, config):
+    data = data.drop(['PID'], axis=1)
     cols_to_fill = config['cols_to_fill']
 
     for feature_type in cols_to_fill:
@@ -35,6 +48,56 @@ def handle_missing_values(data, config):
     )
 
     return data
+
+def feature_engineering(data, config):
+    feature_engineering_config = config['feature_engineering']
+
+    ops = [
+        ("sum", "surface"),
+        ("weighted_sum", "bath"),
+        ("sum", "porch"),
+        ("difference", "age"),
+        ("difference", "remod"),
+        ("unequal", "was_remod"),
+        ("greater_than_zero", "has_pool"),
+        ("greater_than_zero", "has_second_floor"),
+        ("greater_than_zero", "has_garage"),
+        ("greater_than_zero", "has_bsmt"),
+    ]
+
+    cols_to_drop = []
+
+    for operation, new_feature in ops:
+        feature_config = feature_engineering_config[new_feature]
+        data, drop_cols = op_and_drop(operation, data, feature_config)
+        cols_to_drop.extend(drop_cols)
+
+    unique_cols_to_drop = set(cols_to_drop)
+    data = data.drop(columns=unique_cols_to_drop)
+
+    return data
+
+def op_and_drop(op, data, feature):
+    if op == 'sum':
+        data[feature['new']] = data[feature['old']].sum(axis=1)
+        drop_columns = feature['old']
+    elif op == 'weighted_sum':
+        weights = pd.Series(feature['old'])
+        data[feature['new']] = (data[weights.index] * weights).sum(axis=1)
+        drop_columns = weights.index
+    elif op == 'difference':
+        data[feature['new']] = data[feature['minuend']] - data[feature['subtrahend']]
+        drop_columns = [feature['minuend'], feature['subtrahend']]
+    elif op == 'unequal':
+        data[feature['new']] = data[feature['first_operand']] != data[feature['second_operand']]
+        drop_columns = [feature['first_operand'], feature['second_operand']]
+    elif op == 'greater_than_zero':
+        data[feature['new']] = data[feature['operand']] > 0
+        drop_columns = [feature['operand']]
+    else:
+        raise ValueError("The operation is not yet supported.")
+
+    return data, drop_columns
 
 if __name__ == '__main__':
     base_config = read_config("../config/base_config.yaml")

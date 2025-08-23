@@ -9,5 +9,40 @@ model_output_paths:
   scaler: '../models/lightgbm_scaler.joblib'
 
 cols_to_fill:
-  categorical: ['Pool QC', 'Misc Feature', 'Alley', 'Fence', 'Mas Vnr Type', 'Fireplace Qu', 'Garage Cond', 'Garage Finish', 'Garage Qual', 'Garage Type', 'Bsmt Exposure', 'BsmtFin Type 2', 'Bsmt Qual', 'Bsmt Cond', 'BsmtFin Type 1', 'Bsmt Full Bath', 'Bsmt Half Bath']
-  numerical: ['Garage Yr Blt', 'Mas Vnr Area']
+  categorical: ['Pool QC', 'Misc Feature', 'Alley', 'Fence', 'Mas Vnr Type', 'Fireplace Qu', 'Garage Cond', 'Garage Finish', 'Garage Qual', 'Garage Type', 'Bsmt Exposure', 'BsmtFin Type 2', 'Bsmt Qual', 'Bsmt Cond', 'BsmtFin Type 1']
+  numerical: ['Garage Yr Blt', 'Mas Vnr Area', 'Bsmt Full Bath', 'Bsmt Half Bath']
+
+feature_engineering:
+  surface:
+    new: 'Total SF'
+    old: ['Total Bsmt SF', '1st Flr SF', '2nd Flr SF']
+  bath:
+    new: 'Total Bath'
+    old: {'Full Bath': 1, 'Bsmt Full Bath': 1, 'Half Bath': 0.5, 'Bsmt Half Bath': 0.5}
+  porch:
+    new: 'Total Porch'
+    old: ['Open Porch SF', 'Enclosed Porch', '3Ssn Porch', 'Screen Porch']
+  age:
+    new: 'House Age'
+    minuend: 'Yr Sold'
+    subtrahend: 'Year Built'
+  remod:
+    new: 'Years Since Remod'
+    minuend: 'Yr Sold'
+    subtrahend: 'Year Remod/Add'
+  was_remod:
+    new: 'Was Remodeled'
+    first_operand: 'Year Remod/Add'
+    second_operand: 'Year Built'
+  has_pool:
+    new: 'Has Pool'
+    operand: 'Pool Area'
+  has_second_floor:
+    new: 'Has Second Floor'
+    operand: '2nd Flr SF'
+  has_garage:
+    new: 'Has Garage'
+    operand: 'Garage Area'
+  has_bsmt:
+    new: 'Has Bsmt'
+    operand: 'Total Bsmt SF'
