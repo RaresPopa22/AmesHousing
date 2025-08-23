@@ -51,25 +51,11 @@ def handle_missing_values(data, config):
 
 def feature_engineering(data, config):
     feature_engineering_config = config['feature_engineering']
-
-    ops = [
-        ("sum", "surface"),
-        ("weighted_sum", "bath"),
-        ("sum", "porch"),
-        ("difference", "age"),
-        ("difference", "remod"),
-        ("unequal", "was_remod"),
-        ("greater_than_zero", "has_pool"),
-        ("greater_than_zero", "has_second_floor"),
-        ("greater_than_zero", "has_garage"),
-        ("greater_than_zero", "has_bsmt"),
-    ]
-
     cols_to_drop = []
 
-    for operation, new_feature in ops:
-        feature_config = feature_engineering_config[new_feature]
-        data, drop_cols = op_and_drop(operation, data, feature_config)
+    for feature in feature_engineering_config:
+        feature_config = feature_engineering_config[feature]
+        data, drop_cols = enhance_features(feature_config['op'], data, feature_config)
         cols_to_drop.extend(drop_cols)
 
     unique_cols_to_drop = set(cols_to_drop)
@@ -77,7 +63,7 @@ def feature_engineering(data, config):
 
     return data
 
-def op_and_drop(op, data, feature):
+def enhance_features(op, data, feature):
     if op == 'sum':
         data[feature['new']] = data[feature['old']].sum(axis=1)
         drop_columns = feature['old']
