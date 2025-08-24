@@ -127,9 +127,3 @@ def get_preprocessor(X_train):
         ]
     )
     return preprocessor
-
-if __name__ == '__main__':
-    base_config = read_config("../config/base_config.yaml")
-    X_train, X_test, y_train, y_test, prep = preprocess_data(base_config)
-    print("Preprocessing complete")
-    print(f"X_train shape: {X_train.shape}")

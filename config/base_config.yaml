@@ -9,35 +9,32 @@ model_output_paths:
   scaler: '../models/lightgbm_scaler.joblib'
 
 ordinal_features:
-  Lot Shape: ['Reg', 'IR1', 'IR2', 'IR3']
-  Utilities: ['AllPub', 'NoSewr', 'NoSewa', 'ELO']
+  Lot Shape: ['IR3', 'IR2', 'IR1', 'Reg']
   Land Slope: ['Gtl', 'Mod', 'Sev']
-  Exter Qual: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
-  Exter Cond: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
-  Foundation: ['BrkTil', 'CBlock', "PConc", 'Slab', 'Stone', 'Wood']
-  Bsmt Qual: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
-  Bsmt Cond: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
-  Bsmt Exposure: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
-  BsmtFin Type 1: ['GLQ', 'ALQ', 'BLQ', 'Rec', 'LwQ', 'Unf', 'NA']
-  BsmtFin Type 2: ['GLQ', 'ALQ', 'BLQ', 'Rec', 'LwQ', 'Unf', 'NA']
-  Heating QC: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
-  Electrical: ['SBrkr', 'FuseA', 'FuseF', 'FuseP', 'Mix']
-  Kitchen Qual: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
-  Functional: ['Typ', 'Min1', 'Min2', 'Mod', 'Maj1', 'Maj2', 'Sev', 'Sal']
-  Fireplace Qu: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
-  Garage Finish: ['Fin', 'RFn', 'Unf', 'None']
-  Garage Qual: ['Ex', 'Gd', 'TA', 'Fa', 'Po', 'None']
-  Garage Cond: ['Ex', 'Gd', 'TA', 'Fa', 'Po', 'None']
-  Paved Drive: ['Y', 'P', 'N']
-  Pool QC: ['Ex', 'Gd', 'TA', 'Fa', 'Po', 'None']
-  Fence: ['GdPrv', 'MnPrv', 'GdWo', 'MnWw', 'None']
+  Exter Qual: ['Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Exter Cond: ['Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Bsmt Qual: ['None', 'Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Bsmt Cond: ['None', 'Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Bsmt Exposure: ['None', 'No', 'Mn', 'Av', 'Gd']
+  BsmtFin Type 1: ['None', 'Unf', 'LwQ', 'Rec', 'BLQ', 'ALQ', 'GLQ']
+  BsmtFin Type 2: ['None', 'Unf', 'LwQ', 'Rec', 'BLQ', 'ALQ', 'GLQ']
+  Heating QC: ['Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Kitchen Qual: ['Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Functional: ['Sal', 'Sev', 'Maj2', 'Maj1', 'Mod', 'Min2', 'Min1', 'Typ']
+  Fireplace Qu: ['None', 'Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Garage Finish: ['None', 'Unf', 'RFn', 'Fin']
+  Garage Qual: ['None', 'Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Garage Cond: ['None', 'Po', 'Fa', 'TA', 'Gd', 'Ex']
+  Paved Drive: ['N', 'P', 'Y']
+  Pool QC: ['None', 'Fa', 'TA', 'Gd', 'Ex']
+  Fence: ['None', 'MnWw', 'GdWo', 'MnPrv', 'GdPrv']
 
 rare_categories:
   values: ['Neighborhood']
 
 cols_to_fill:
-  categorical: ['Pool QC', 'Misc Feature', 'Alley', 'Fence', 'Mas Vnr Type', 'Fireplace Qu', 'Garage Cond', 'Garage Finish', 'Garage Qual', 'Garage Type', 'Bsmt Exposure', 'BsmtFin Type 2', 'Bsmt Qual', 'Bsmt Cond', 'BsmtFin Type 1']
-  numerical: ['Garage Yr Blt', 'Mas Vnr Area', 'Bsmt Full Bath', 'Bsmt Half Bath']
+  categorical: ['Pool QC', 'Misc Feature', 'Alley', 'Fence', 'Mas Vnr Type', 'Fireplace Qu', 'Garage Cond', 'Garage Finish', 'Garage Qual', 'Garage Type', 'Bsmt Exposure', 'BsmtFin Type 2', 'Bsmt Qual', 'Bsmt Cond', 'BsmtFin Type 1', 'Electrical', 'Utilities']
+  numerical: ['Garage Yr Blt', 'Mas Vnr Area', 'Bsmt Full Bath', 'Bsmt Half Bath', 'Lot Frontage', 'BsmtFin SF 1', 'BsmtFin SF 2', 'Bsmt Unf SF', 'Total Bsmt SF', 'Garage Cars', 'Garage Area']
 
 feature_engineering:
   surface:
