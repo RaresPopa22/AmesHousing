@@ -8,6 +8,33 @@ model_output_paths:
   model: '../models/lightgbm.joblib'
   scaler: '../models/lightgbm_scaler.joblib'
 
+ordinal_features:
+  Lot Shape: ['Reg', 'IR1', 'IR2', 'IR3']
+  Utilities: ['AllPub', 'NoSewr', 'NoSewa', 'ELO']
+  Land Slope: ['Gtl', 'Mod', 'Sev']
+  Exter Qual: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
+  Exter Cond: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
+  Foundation: ['BrkTil', 'CBlock', "PConc", 'Slab', 'Stone', 'Wood']
+  Bsmt Qual: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
+  Bsmt Cond: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
+  Bsmt Exposure: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
+  BsmtFin Type 1: ['GLQ', 'ALQ', 'BLQ', 'Rec', 'LwQ', 'Unf', 'NA']
+  BsmtFin Type 2: ['GLQ', 'ALQ', 'BLQ', 'Rec', 'LwQ', 'Unf', 'NA']
+  Heating QC: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
+  Electrical: ['SBrkr', 'FuseA', 'FuseF', 'FuseP', 'Mix']
+  Kitchen Qual: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
+  Functional: ['Typ', 'Min1', 'Min2', 'Mod', 'Maj1', 'Maj2', 'Sev', 'Sal']
+  Fireplace Qu: ['Ex', 'Gd', 'TA', 'Fa', 'Po']
+  Garage Finish: ['Fin', 'RFn', 'Unf', 'None']
+  Garage Qual: ['Ex', 'Gd', 'TA', 'Fa', 'Po', 'None']
+  Garage Cond: ['Ex', 'Gd', 'TA', 'Fa', 'Po', 'None']
+  Paved Drive: ['Y', 'P', 'N']
+  Pool QC: ['Ex', 'Gd', 'TA', 'Fa', 'Po', 'None']
+  Fence: ['GdPrv', 'MnPrv', 'GdWo', 'MnWw', 'None']
+
+rare_categories:
+  values: ['Neighborhood']
+
 cols_to_fill:
   categorical: ['Pool QC', 'Misc Feature', 'Alley', 'Fence', 'Mas Vnr Type', 'Fireplace Qu', 'Garage Cond', 'Garage Finish', 'Garage Qual', 'Garage Type', 'Bsmt Exposure', 'BsmtFin Type 2', 'Bsmt Qual', 'Bsmt Cond', 'BsmtFin Type 1']
   numerical: ['Garage Yr Blt', 'Mas Vnr Area', 'Bsmt Full Bath', 'Bsmt Half Bath']
