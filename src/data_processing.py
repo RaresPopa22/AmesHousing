@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import yaml
 from sklearn.compose import ColumnTransformer
@@ -18,6 +19,7 @@ def load_dataset(config):
 
 def preprocess_data(config):
     data = load_dataset(config)
+    data['SalePrice'] = np.log1p(data['SalePrice'])
 
     X = data.drop('SalePrice', axis=1)
     y = data['SalePrice']
