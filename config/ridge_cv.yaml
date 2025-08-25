@@ -1,0 +1,5 @@
+model_name: 'ridge_cv'
+
+model_output_paths:
+  dir: '../models'
+  model: '../models/ridge_cv.joblib'

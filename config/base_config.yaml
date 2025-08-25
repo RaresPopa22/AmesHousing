@@ -1,12 +1,7 @@
 data_paths:
   raw_data: '../data/AmesHousing.csv'
-  X_test: '../data/X_test_scaled.csv'
-  y_test: '../data/y_test.csv'
-
-model_output_paths:
-  dir: '../models'
-  model: '../models/lightgbm.joblib'
-  scaler: '../models/lightgbm_scaler.joblib'
+  X_test_npy: '../data/X_test.npy'
+  y_test_npy: '../data/y_test.npy'
 
 ordinal_features:
   Lot Shape: ['IR3', 'IR2', 'IR1', 'Reg']

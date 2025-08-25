@@ -1,21 +1,13 @@
 import numpy as np
 import pandas as pd
-import yaml
 from sklearn.compose import ColumnTransformer
 from sklearn.feature_selection import VarianceThreshold
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
+from src.utils import load_dataset
 
-def read_config(path):
-    with open(path, 'r') as f:
-        config = yaml.safe_load(f)
-
-    return config
-
-def load_dataset(config):
-    return pd.read_csv(config['data_paths']['raw_data'])
 
 def preprocess_data(config):
     data = load_dataset(config)
@@ -49,6 +41,7 @@ def preprocess_data(config):
 
     return X_train_reduced, X_test_reduced, y_train, y_test, preprocessor
 
+
 def handle_missing_features(data, config):
     data = data.drop(['PID'], axis=1)
     cols_to_fill = config['cols_to_fill']
@@ -66,12 +59,14 @@ def handle_missing_features(data, config):
 
     return data
 
+
 def handle_ordinal_features(data, config):
     ordinal_features_config = config['ordinal_features']
     for feature, ordering in ordinal_features_config.items():
         category_map = {category: i for i, category in enumerate(ordering)}
         data[feature] = data[feature].map(category_map)
     return data
+
 
 def handle_rare_categories(data, config):
     rare_categories = config['rare_categories']
@@ -82,6 +77,7 @@ def handle_rare_categories(data, config):
         data[feature] = data[feature].replace(low_freq, 'Other')
 
     return data
+
 
 def feature_engineering(data, config):
     feature_engineering_config = config['feature_engineering']
@@ -96,6 +92,7 @@ def feature_engineering(data, config):
     data = data.drop(columns=unique_cols_to_drop)
 
     return data
+
 
 def enhance_features(op, data, feature):
     if op == 'sum':
@@ -118,6 +115,7 @@ def enhance_features(op, data, feature):
         raise ValueError("The operation is not yet supported.")
 
     return data, drop_columns
+
 
 def get_preprocessor(X_train):
     categorical_features = X_train.select_dtypes(include=['object', 'category']).columns
