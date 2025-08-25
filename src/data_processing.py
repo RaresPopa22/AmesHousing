@@ -94,27 +94,60 @@ def feature_engineering(data, config):
     return data
 
 
-def enhance_features(op, data, feature):
-    if op == 'sum':
-        data[feature['new_name']] = data[feature['old']].sum(axis=1)
-        drop_columns = feature['old']
-    elif op == 'weighted_sum':
-        weights = pd.Series(feature['old'])
-        data[feature['new_name']] = (data[weights.index] * weights).sum(axis=1)
-        drop_columns = weights.index
-    elif op == 'difference':
-        data[feature['new_name']] = data[feature['minuend']] - data[feature['subtrahend']]
-        drop_columns = [feature['minuend'], feature['subtrahend']]
-    elif op == 'unequal':
-        data[feature['new_name']] = data[feature['first_operand']] != data[feature['second_operand']]
-        drop_columns = [feature['first_operand'], feature['second_operand']]
-    elif op == 'greater_than_zero':
-        data[feature['new_name']] = data[feature['operand']] > 0
-        drop_columns = [feature['operand']]
-    else:
-        raise ValueError("The operation is not yet supported.")
+def enhance_features(op_name, data, feature):
+    op_dict = {
+        'sum': _sum_features,
+        'weighted_sum': _weighted_sum_features,
+        'difference': _difference_features,
+        'unequal': _unequal_features,
+        'greater_than_zero': _greater_than_zero_features
+    }
 
-    return data, drop_columns
+    if op_name in op_dict:
+        return op_dict[op_name](data, feature)
+    else:
+        raise ValueError(f'The operation {op_name} is not yet supported')
+
+
+def _get_new_col(feature):
+    return feature['new_name']
+
+
+def _sum_features(data, feature):
+    old_columns = feature['old']
+    new_col = _get_new_col(feature)
+    data[new_col] = data[old_columns].sum(axis=1)
+    return data, old_columns
+
+
+def _weighted_sum_features(data, feature):
+    weights = pd.Series(feature['old'])
+    new_col = _get_new_col(feature)
+    data[new_col] = (data[weights.index] * weights).sum(axis=1)
+    return data, list(weights.index)
+
+
+def _difference_features(data, feature):
+    new_col = _get_new_col(feature)
+    minuend_col = feature['minuend']
+    subtrahend_col = feature['subtrahend']
+    data[new_col] = data[minuend_col] - data[subtrahend_col]
+    return data, [minuend_col, subtrahend_col]
+
+
+def _unequal_features(data, feature):
+    new_col = _get_new_col(feature)
+    first_operand_col = feature['first_operand']
+    second_operand_col = feature['second_operand']
+    data[new_col] = (data[first_operand_col] != data[second_operand_col]).astype(int)
+    return data, [first_operand_col, second_operand_col]
+
+
+def _greater_than_zero_features(data, feature):
+    new_col = _get_new_col(feature)
+    operand_col = feature['operand']
+    data[new_col] = (data[operand_col] > 0).astype(int)
+    return data, [operand_col]
 
 
 def get_preprocessor(X_train):
