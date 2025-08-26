@@ -180,6 +180,7 @@ def handle_outliers_iqr(X_train, y_train, config):
 
     return X_train, y_train
 
+
 def handle_multicollinearity(X_train, X_test, config):
     multicollinearity_config = config['multicollinearity']
     threshold = multicollinearity_config['threshold']
@@ -193,5 +194,3 @@ def handle_multicollinearity(X_train, X_test, config):
     X_test = X_test.drop(columns=to_drop)
 
     return X_train, X_test
-
-
