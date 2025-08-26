@@ -75,3 +75,9 @@ feature_engineering:
     op: 'greater_than_zero'
     new_name: 'Has Bsmt'
     operand: 'Total Bsmt SF'
+
+outliers:
+  features: ['Gr Liv Area']
+
+multicollinearity:
+  threshold: 80

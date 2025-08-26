@@ -17,8 +17,10 @@ def preprocess_data(config):
     y = data['SalePrice']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+    X_train, X_test = handle_multicollinearity(X_train, X_test, config)
 
     X_train = handle_missing_features(X_train, config)
+    X_train, y_train = handle_outliers_iqr(X_train, y_train, config)
     X_test = handle_missing_features(X_test, config)
 
     X_train = handle_ordinal_features(X_train, config)
@@ -160,3 +162,36 @@ def get_preprocessor(X_train):
         ]
     )
     return preprocessor
+
+
+def handle_outliers_iqr(X_train, y_train, config):
+    outlier_config = config['outliers']
+
+    for feature in outlier_config['features']:
+        Q1 = X_train[feature].quantile(0.25)
+        Q3 = X_train[feature].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+
+        mask = (X_train[feature] >= lower_bound) & (X_train[feature] <= upper_bound)
+        X_train = X_train[mask]
+        y_train = y_train[mask]
+
+    return X_train, y_train
+
+def handle_multicollinearity(X_train, X_test, config):
+    multicollinearity_config = config['multicollinearity']
+    threshold = multicollinearity_config['threshold']
+
+    correlation_matrix = X_train.corr(numeric_only=True).abs()
+    upper_triangle = np.triu(np.ones(correlation_matrix.shape), k=1).astype(bool)
+    upper = correlation_matrix.where(upper_triangle)
+    to_drop = [column for column in upper.columns if any(upper[column] > threshold)]
+
+    X_train = X_train.drop(columns=to_drop)
+    X_test = X_test.drop(columns=to_drop)
+
+    return X_train, X_test
+
+
