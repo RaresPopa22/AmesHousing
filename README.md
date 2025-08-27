@@ -155,4 +155,4 @@ I will end this section with the graph for all three models:
 ![img_1.png](img_1.png)
 
 While RidgeCV is numerically the best, we can see that all three models have learned a nearly identical relationship between
-features and the sale price. This could also back up the data processing stage. 
+features and the sale price. This could also back up the data processing stage.
