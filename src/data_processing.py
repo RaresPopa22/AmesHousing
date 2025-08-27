@@ -4,7 +4,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.feature_selection import VarianceThreshold
 
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, PolynomialFeatures
 
 from src.utils import load_dataset
 
@@ -12,6 +12,8 @@ from src.utils import load_dataset
 def preprocess_data(config):
     data = load_dataset(config)
     data['SalePrice'] = np.log1p(data['SalePrice'])
+
+    data = handle_feature_selection(config, data)
 
     X = data.drop('SalePrice', axis=1)
     y = data['SalePrice']
@@ -32,6 +34,8 @@ def preprocess_data(config):
     X_train = feature_engineering(X_train, config)
     X_test = feature_engineering(X_test, config)
 
+    X_train, X_test = handle_polynomial_features(X_train, X_test, config)
+
     preprocessor = get_preprocessor(X_train)
 
     X_train_scaled = preprocessor.fit_transform(X_train)
@@ -41,11 +45,20 @@ def preprocess_data(config):
     X_train_reduced = selector.fit_transform(X_train_scaled)
     X_test_reduced = selector.transform(X_test_scaled)
 
-    return X_train_reduced, X_test_reduced, y_train, y_test, preprocessor
+    return X_train_reduced, X_test_reduced, y_train, y_test, preprocessor, selector
+
+
+def handle_feature_selection(config, data):
+    top_features_config = config['top_20_features']
+    if top_features_config['apply']:
+        top_features = top_features_config.get('values', None)
+        features_to_keep = top_features + ['Sale Price']
+        data = data[features_to_keep]
+    return data
 
 
 def handle_missing_features(data, config):
-    data = data.drop(['PID'], axis=1)
+    data = data.drop(['PID', 'Order'], axis=1)
     cols_to_fill = config['cols_to_fill']
 
     for feature_type in cols_to_fill:
@@ -158,7 +171,7 @@ def get_preprocessor(X_train):
     preprocessor = ColumnTransformer(
         transformers=[
             ('num', StandardScaler(), numerical_features),
-            ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
+            ('cat', OneHotEncoder(handle_unknown='ignore', drop='if_binary'), categorical_features)
         ]
     )
     return preprocessor
@@ -192,5 +205,39 @@ def handle_multicollinearity(X_train, X_test, config):
 
     X_train = X_train.drop(columns=to_drop)
     X_test = X_test.drop(columns=to_drop)
+
+    return X_train, X_test
+
+def handle_polynomial_features(X_train, X_test, config):
+    polynomial_config = config['polynomial_features']
+    if not polynomial_config or not polynomial_config.get('apply', False):
+        return X_train, X_test
+
+    polynomial_columns = polynomial_config['columns']
+    if not polynomial_columns:
+        print('Warning: Polynomial Features enabled, but no columns were specified')
+        return X_train, X_test
+
+    degree = polynomial_config.get('degree', 2)
+    is_interaction_only = polynomial_config.get('interaction_only', False)
+
+    pf = PolynomialFeatures(degree=degree, interaction_only=is_interaction_only, include_bias=False)
+
+    X_train_subset = X_train[polynomial_columns]
+    X_test_subset = X_test[polynomial_columns]
+
+    X_train_poly = pf.fit_transform(X_train_subset)
+    X_test_poly = pf.transform(X_test_subset)
+
+    pf_names = pf.get_feature_names_out(X_train_subset.columns)
+
+    X_train_df = pd.DataFrame(X_train_poly, columns=pf_names, index=X_train.index)
+    X_test_df = pd.DataFrame(X_test_poly, columns=pf_names, index=X_test.index)
+
+    X_train = X_train.drop(columns=polynomial_columns)
+    X_test = X_test.drop(columns=polynomial_columns)
+
+    X_train = X_train.join(X_train_df)
+    X_test = X_test.join(X_test_df)
 
     return X_train, X_test

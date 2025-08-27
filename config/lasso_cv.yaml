@@ -1,5 +1,5 @@
 model_name: 'lasso_cv'
 
 model_output_paths:
-  dir: '../models'
-  model: '../models/lasso_cv.joblib'
+  dir: 'models'
+  model: 'models/lasso_cv.joblib'

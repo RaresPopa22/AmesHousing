@@ -1,0 +1,5 @@
+model_name: 'elastic_net_cv'
+
+model_output_paths:
+  dir: 'models'
+  model: 'models/elastic_net_cv.joblib'

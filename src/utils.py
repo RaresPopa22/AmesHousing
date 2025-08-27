@@ -73,7 +73,7 @@ def ax_add_text(g, model_names, y_preds_original, y_test_original):
         r2 = r2_score(y_test_original, y_preds_original[i])
 
         ax.text(
-            0.05, 0.95, f'R^2 = {r2:.2f}',
+            0.05, 0.95, f'R^2 = {r2:.3f}',
             transform=ax.transAxes,
             fontsize=12,
             verticalalignment='top',
@@ -100,9 +100,9 @@ def get_metrics_and_print(y_pred_original, y_test_original):
     mae = mean_absolute_error(y_test_original, y_pred_original)
     rmse = np.sqrt(mean_squared_error(y_test_original, y_pred_original))
 
-    print(f"R-squared: {r2:.2f}")
-    print(f"Mean Absolute Error (MAE): ${mae:,.2f}")
-    print(f"Root Mean Squared Error (RMSE): ${rmse:,.2f}")
+    print(f"R-squared: {r2:.3f}")
+    print(f"Mean Absolute Error (MAE): ${mae:,.3f}")
+    print(f"Root Mean Squared Error (RMSE): ${rmse:,.3f}")
 
 
 def save_test_data(config, X_test, y_test):
@@ -118,7 +118,7 @@ def load_test_data(config):
 
 
 def parse_args_and_get_config(stage):
-    base_config = "../config/base_config.yaml"
+    base_config = "config/base_config.yaml"
     parser = argparse.ArgumentParser()
 
     if stage == 'train':

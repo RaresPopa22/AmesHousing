@@ -1,7 +1,7 @@
 data_paths:
-  raw_data: '../data/AmesHousing.csv'
-  X_test_npy: '../data/X_test.npy'
-  y_test_npy: '../data/y_test.npy'
+  raw_data: 'data/AmesHousing.csv'
+  X_test_npy: 'data/X_test.npy'
+  y_test_npy: 'data/y_test.npy'
 
 ordinal_features:
   Lot Shape: ['IR3', 'IR2', 'IR1', 'Reg']
@@ -81,3 +81,15 @@ outliers:
 
 multicollinearity:
   threshold: 80
+
+polynomial_features:
+  apply: False
+  degree: 2
+  interaction_only: False
+  columns: ['Overall Qual', 'Gr Liv Area', 'Garage Cars']
+
+top_20_features:
+  apply: False
+  values: ['Overall Qual', 'Total SF', 'House Age', 'Gr Liv Area', 'Garage Yr Blt', 'Lot Area', 'Years Since Remod', 'Total Bath',
+        'Bsmt Unf SF', 'Garage Cars', 'Central Air_Y', 'Overall Cond', 'BsmtFin SF 1', 'Exter Qual', 'Bsmt Qual', 'Total Porch',
+        'Heating QC', 'Functional', 'Kitchen Qual', 'Lot Frontage']
