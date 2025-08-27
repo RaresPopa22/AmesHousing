@@ -116,7 +116,7 @@ In order to train a model, run the `train.py` script with the desired configurat
 #### Evaluating the models
 
 After training, you can evaluate and compare the models using the evaluate.py script:
-`python -m src.evaluate --models models/ridge_cv.joblib models/lasso_cv.joblib models/elastic_net_cv.joblib --x-test data/X_test.npy --y-test data/y_test.npy`
+`python -m src.evaluate --models models/ridge_cv.joblib models/lasso_cv.joblib models/elastic_net_cv.joblib --x-test data/processed/X_test.npy --y-test data/processed/y_test.npy`
 
 This will print the evaluation metrics (like RMSE) and use faceted plots to do a side by side comparison of the different models used.
 

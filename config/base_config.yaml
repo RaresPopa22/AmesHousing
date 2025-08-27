@@ -1,7 +1,7 @@
 data_paths:
-  raw_data: 'data/AmesHousing.csv'
-  X_test_npy: 'data/X_test.npy'
-  y_test_npy: 'data/y_test.npy'
+  raw_data: 'data/raw/AmesHousing.csv'
+  X_test_npy: 'data/processed/X_test.npy'
+  y_test_npy: 'data/processed/y_test.npy'
 
 ordinal_features:
   Lot Shape: ['IR3', 'IR2', 'IR1', 'Reg']
