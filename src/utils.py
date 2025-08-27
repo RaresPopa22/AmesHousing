@@ -38,17 +38,25 @@ def load_model(path):
     return joblib.load(path)
 
 
-def evaluate_model(y_pred_original, y_test_original):
-    get_metrics_and_print(y_pred_original, y_test_original)
-    plot_actual_vs_predicted(y_pred_original, y_test_original)
+def evaluate_model(y_preds_original, y_test_original, model_names):
+    for i, (y_pred, model_name) in enumerate(zip(y_preds_original, model_names)):
+        get_metrics_and_print(y_pred, y_test_original)
+
+    plot_actual_vs_predicted(y_preds_original, y_test_original, model_names)
 
 
-def plot_actual_vs_predicted(y_pred_original, y_test_original):
-    plt.figure(figsize=(10, 6))
-    sns.regplot(x=y_test_original, y=y_pred_original, scatter_kws={'alpha': 0.5}, line_kws={'color': 'red'})
+def plot_actual_vs_predicted(y_preds_original, y_test_original, model_names):
+    plt.figure(figsize=(12, 8))
+    sns.scatterplot(x=y_test_original, y=y_test_original, color='gray', label='Actual Values', alpha=0.6)
+    colors = sns.color_palette("deep", len(y_preds_original))
+
+    for i, (y_pred, model_name) in enumerate(zip(y_preds_original, model_names)):
+        sns.regplot(x=y_test_original, y=y_pred, scatter=False, line_kws={'linestyle': '--'}, color=colors[i], label=f'Predicted - {model_name}')
+
     plt.xlabel('Actual Sale Price ($)')
     plt.ylabel("Predicted Sale Price ($)")
     plt.title("Actual vs. Predicted Sale Prices")
+    plt.legend()
     plt.grid(True)
     plt.show()
 
@@ -57,7 +65,7 @@ def get_metrics_and_print(y_pred_original, y_test_original):
     r2 = r2_score(y_test_original, y_pred_original)
     mae = mean_absolute_error(y_test_original, y_pred_original)
     rmse = np.sqrt(mean_squared_error(y_test_original, y_pred_original))
-    print("Evaluation Metric on Test Set")
+
     print(f"R-squared: {r2:.2f}")
     print(f"Mean Absolute Error (MAE): ${mae:,.2f}")
     print(f"Root Mean Squared Error (RMSE): ${rmse:,.2f}")

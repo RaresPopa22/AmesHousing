@@ -7,6 +7,10 @@ from src.utils import load_test_data, load_model, evaluate_model, parse_args_and
 
 def evaluate_models(base_config, model_paths):
     X_test, y_test = load_test_data(base_config)
+    y_test_original = np.expm1(y_test)
+
+    predictions = []
+    model_names = []
 
     for path in model_paths:
         model_path = Path(path)
@@ -16,15 +20,15 @@ def evaluate_models(base_config, model_paths):
             continue
 
         model_path = Path(path)
-        base_config['model_name'] = model_path.stem
-
         model = load_model(model_path)
         y_pred_log = model.predict(X_test)
 
-        y_test_original = np.expm1(y_test)
         y_pred_original = np.expm1(y_pred_log)
+        predictions.append(y_pred_original)
+        model_names.append(model_path.stem)
 
-        evaluate_model(y_pred_original, y_test_original)
+
+    evaluate_model(predictions, y_test_original, model_names)
 
 
 if __name__ == '__main__':
