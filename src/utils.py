@@ -40,25 +40,59 @@ def load_model(path):
 
 def evaluate_model(y_preds_original, y_test_original, model_names):
     for i, (y_pred, model_name) in enumerate(zip(y_preds_original, model_names)):
+        print(f"Evaluation Metric on Test Set for {model_name}")
         get_metrics_and_print(y_pred, y_test_original)
 
     plot_actual_vs_predicted(y_preds_original, y_test_original, model_names)
 
 
 def plot_actual_vs_predicted(y_preds_original, y_test_original, model_names):
-    plt.figure(figsize=(12, 8))
-    sns.scatterplot(x=y_test_original, y=y_test_original, color='gray', label='Actual Values', alpha=0.6)
-    colors = sns.color_palette("deep", len(y_preds_original))
+    plot_data = add_plot_data(model_names, y_preds_original, y_test_original)
+    combined_df = pd.concat(plot_data, ignore_index=True)
 
-    for i, (y_pred, model_name) in enumerate(zip(y_preds_original, model_names)):
-        sns.regplot(x=y_test_original, y=y_pred, scatter=False, line_kws={'linestyle': '--'}, color=colors[i], label=f'Predicted - {model_name}')
+    g = sns.lmplot(
+        data=combined_df,
+        x='Actual Sale Price ($)',
+        y='Predicted Sale Price ($)',
+        col='Model',
+        hue='Model',
+        height=6,
+        aspect=1,
+        scatter_kws={'alpha': 0.5},
+        line_kws={'linestyle': '-'}
+    )
 
-    plt.xlabel('Actual Sale Price ($)')
-    plt.ylabel("Predicted Sale Price ($)")
-    plt.title("Actual vs. Predicted Sale Prices")
-    plt.legend()
-    plt.grid(True)
+    ax_add_text(g, model_names, y_preds_original, y_test_original)
+    g.figure.suptitle('Actual vs. Predicted Sale Prices by model', y=1.03)
     plt.show()
+
+
+def ax_add_text(g, model_names, y_preds_original, y_test_original):
+    for i, model_name in enumerate(model_names):
+        ax = g.axes[0, i]
+        r2 = r2_score(y_test_original, y_preds_original[i])
+
+        ax.text(
+            0.05, 0.95, f'R^2 = {r2:.2f}',
+            transform=ax.transAxes,
+            fontsize=12,
+            verticalalignment='top',
+            bbox=dict(boxstyle='round,pad=0.5', fc='wheat', alpha=0.5)
+        )
+
+
+def add_plot_data(model_names, y_preds_original, y_test_original):
+    plot_data = []
+    for i, y_pred in enumerate(y_preds_original):
+        model_name = model_names[i]
+        temp_df = pd.DataFrame({
+            'Actual Sale Price ($)': y_test_original,
+            'Predicted Sale Price ($)': y_pred,
+            'Model': model_name
+        })
+
+        plot_data.append(temp_df)
+    return plot_data
 
 
 def get_metrics_and_print(y_pred_original, y_test_original):
