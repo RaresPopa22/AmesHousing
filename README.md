@@ -95,7 +95,7 @@ To get this up and running, please follow these steps:
 2. Install Python packages
     `pip install -r requirements.txt`
 3. Download the dataset
-    Download the dataset 'Ames Housing dataset' from [Kaggle](https://www.kaggle.com/datasets/shashanknecrothapa/ames-housing-dataset#:~:text=Download)
+    Download the dataset 'Ames Housing dataset' from [Kaggle](https://www.kaggle.com/datasets/shashanknecrothapa/ames-housing-dataset#:~:text=Download) and place it in data/raw
 
 ### Usage
 
