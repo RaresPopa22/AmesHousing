@@ -1,6 +1,6 @@
 data_paths:
   raw_data: 'data/raw/AmesHousing.csv'
-  X_test_npy: 'data/processed/X_test.npy'
+  X_test_job: 'data/processed/X_test.joblib'
   y_test_npy: 'data/processed/y_test.npy'
 
 ordinal_features:
@@ -29,9 +29,11 @@ rare_categories:
 
 cols_to_fill:
   categorical: ['Pool QC', 'Misc Feature', 'Alley', 'Fence', 'Mas Vnr Type', 'Fireplace Qu', 'Garage Cond', 'Garage Finish', 'Garage Qual', 'Garage Type', 'Bsmt Exposure', 'BsmtFin Type 2', 'Bsmt Qual', 'Bsmt Cond', 'BsmtFin Type 1', 'Electrical', 'Utilities']
-  numerical: ['Garage Yr Blt', 'Mas Vnr Area', 'Bsmt Full Bath', 'Bsmt Half Bath', 'Lot Frontage', 'BsmtFin SF 1', 'BsmtFin SF 2', 'Bsmt Unf SF', 'Total Bsmt SF', 'Garage Cars', 'Garage Area']
+  numerical: ['Mas Vnr Area', 'Bsmt Full Bath', 'Bsmt Half Bath', 'Lot Frontage', 'BsmtFin SF 1', 'BsmtFin SF 2', 'Bsmt Unf SF', 'Total Bsmt SF', 'Garage Cars']
 
-feature_engineering:
+cols_to_drop: ['PID', 'Order']
+
+feature_engineer:
   surface:
     op: 'sum'
     new_name: 'Total SF'
@@ -70,7 +72,7 @@ feature_engineering:
   has_garage:
     op: 'greater_than_zero'
     new_name: 'Has Garage'
-    operand: 'Garage Area'
+    operand: 'Garage Cars'
   has_bsmt:
     op: 'greater_than_zero'
     new_name: 'Has Bsmt'
@@ -80,16 +82,16 @@ outliers:
   features: ['Gr Liv Area']
 
 multicollinearity:
-  threshold: 80
+  threshold: 0.80
 
 polynomial_features:
   apply: False
   degree: 2
   interaction_only: False
-  columns: ['Overall Qual', 'Gr Liv Area', 'Garage Cars']
+  columns: ['Overall Qual', 'Gr Liv Area']
 
 top_20_features:
   apply: False
-  values: ['Overall Qual', 'Total SF', 'House Age', 'Gr Liv Area', 'Garage Yr Blt', 'Lot Area', 'Years Since Remod', 'Total Bath',
+  values: ['Overall Qual', 'Total SF', 'House Age', 'Gr Liv Area', 'Lot Area', 'Years Since Remod', 'Total Bath',
         'Bsmt Unf SF', 'Garage Cars', 'Central Air_Y', 'Overall Cond', 'BsmtFin SF 1', 'Exter Qual', 'Bsmt Qual', 'Total Porch',
         'Heating QC', 'Functional', 'Kitchen Qual', 'Lot Frontage']

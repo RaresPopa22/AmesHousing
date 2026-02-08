@@ -1,0 +1,22 @@
+from sklearn.base import BaseEstimator, TransformerMixin
+
+
+class RareCategoryHandler(BaseEstimator, TransformerMixin):
+    def __init__(self, config):
+        self.config = config
+
+    def fit(self, X, y=None):
+        self.low_freq_ = []
+        for feature in self.config['values']:
+            value_counts = X[feature].value_counts()
+            low_freq_mask = value_counts / len(X) < 0.01
+            low_freq = value_counts[low_freq_mask].index
+            self.low_freq_.append((feature, low_freq))
+
+        return self
+
+    def transform(self, X):
+        X = X.copy()
+        for feature, low_freq in self.low_freq_:
+            X[feature] = X[feature].replace(low_freq, 'Other')
+        return X

@@ -1,15 +1,21 @@
 import argparse
+import logging
+from pathlib import Path
 
 import joblib
-import os
-import pandas as pd
-import yaml
 import numpy as np
-
+import pandas as pd
 import seaborn as sns
+import yaml
+from matplotlib import pyplot as plt
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
-from matplotlib import pyplot as plt
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def drop_columns(X, cols):
+    return X.drop(columns=cols)
 
 
 def read_config(path):
@@ -17,6 +23,7 @@ def read_config(path):
         config = yaml.safe_load(f)
 
     return config
+
 
 def read_configs(base_path, specific_path):
     base_config = read_config(base_path)
@@ -29,18 +36,9 @@ def load_dataset(config):
     return pd.read_csv(config['data_paths']['raw_data'])
 
 
-def save_model(config, model):
-    os.makedirs(config['model_output_paths']['dir'], exist_ok=True)
-    joblib.dump(model, config['model_output_paths']['model'])
-    print(f"Model saved successfully to {config['model_output_paths']['model']}")
-
-def load_model(path):
-    return joblib.load(path)
-
-
-def evaluate_model(y_preds_original, y_test_original, model_names):
+def evaluate_pipeline(y_preds_original, y_test_original, model_names):
     for i, (y_pred, model_name) in enumerate(zip(y_preds_original, model_names)):
-        print(f"Evaluation Metric on Test Set for {model_name}")
+        logger.info(f"Evaluation Metric on Test Set for {model_name}")
         get_metrics_and_print(y_pred, y_test_original)
 
     plot_actual_vs_predicted(y_preds_original, y_test_original, model_names)
@@ -100,25 +98,36 @@ def get_metrics_and_print(y_pred_original, y_test_original):
     mae = mean_absolute_error(y_test_original, y_pred_original)
     rmse = np.sqrt(mean_squared_error(y_test_original, y_pred_original))
 
-    print(f"R-squared: {r2:.3f}")
-    print(f"Mean Absolute Error (MAE): ${mae:,.3f}")
-    print(f"Root Mean Squared Error (RMSE): ${rmse:,.3f}")
+    logger.info(f"R-squared: {r2:.3f}")
+    logger.info(f"Mean Absolute Error (MAE): ${mae:,.3f}")
+    logger.info(f"Root Mean Squared Error (RMSE): ${rmse:,.3f}")
 
 
 def save_test_data(config, X_test, y_test):
-    np.save(config['data_paths']['X_test_npy'], X_test)
+    joblib.dump(X_test, config['data_paths']['X_test_job'])
     np.save(config['data_paths']['y_test_npy'], y_test)
 
 
 def load_test_data(config):
-    X_test = np.load(config['data_paths']['X_test_npy'])
-    y_test = np.load(config['data_paths']['y_test_npy'])
+    X_test = joblib.load(config['data_paths']['X_test_job'])
+    y_test = np.load(config['data_paths']['y_test_npy'], allow_pickle=True)
 
     return X_test, y_test.squeeze()
 
 
+def check_for_invalid_data(full_pipeline, X_train, y_train):
+    preprocessing_pipeline = full_pipeline[:-1]
+    X_transformed = preprocessing_pipeline.fit_transform(X_train, y_train)
+
+    logger.info(f'Shape {X_transformed.shape}')
+    logger.info(f'NaN count: {np.isnan(X_transformed).sum()}')
+    logger.info(f'Inf count: {np.isnan(X_transformed).sum()}')
+    logger.info(f'Max value: {np.nanmax(X_transformed)}')
+    logger.info(f'Min value: {np.nanmin(X_transformed)}')
+
+
 def parse_args_and_get_config(stage):
-    base_config = "config/base_config.yaml"
+    base_config = Path(__file__).parent.parent / 'config' / 'base_config.yaml'
     parser = argparse.ArgumentParser()
 
     if stage == 'train':
@@ -133,5 +142,3 @@ def parse_args_and_get_config(stage):
         return read_config(base_config), args.models
     else:
         raise ValueError("Unknown stage. Only 'train' and 'evaluate' supported so far")
-
-

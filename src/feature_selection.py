@@ -1,3 +1,6 @@
+import logging
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -5,6 +8,9 @@ from sklearn.ensemble import RandomForestRegressor
 
 from src.data_processing import preprocess_data
 from src.utils import read_config
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def get_feature_importance(config):
@@ -24,7 +30,7 @@ def get_feature_importance(config):
         'importance': rf.feature_importances_
     }).sort_values('importance', ascending=False)
 
-    print(f'Top 20 most important features: {importance.head(20)}')
+    logger.info(f'Top 20 most important features: {importance.head(20)}')
 
     plot(importance)
 
@@ -40,5 +46,5 @@ def plot(importance):
 
 
 if __name__ == '__main__':
-    config = read_config("../config/base_config.yaml")
+    config = read_config(Path(__file__).parent.parent / 'config' / 'base_config.yaml')
     get_feature_importance(config)
