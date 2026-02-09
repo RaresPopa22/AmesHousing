@@ -9,7 +9,7 @@ class RareCategoryHandler(BaseEstimator, TransformerMixin):
         self.low_freq_ = []
         for feature in self.config['values']:
             value_counts = X[feature].value_counts()
-            low_freq_mask = value_counts / len(X) < 0.01
+            low_freq_mask = value_counts / len(X) < self.config.get("threshold", 0.01)
             low_freq = value_counts[low_freq_mask].index
             self.low_freq_.append((feature, low_freq))
 

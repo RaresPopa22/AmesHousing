@@ -1,7 +1,7 @@
 data_paths:
   raw_data: 'data/raw/AmesHousing.csv'
   X_test_job: 'data/processed/X_test.joblib'
-  y_test_npy: 'data/processed/y_test.npy'
+  y_test_job: 'data/processed/y_test.joblib'
 
 ordinal_features:
   Lot Shape: ['IR3', 'IR2', 'IR1', 'Reg']
@@ -26,6 +26,7 @@ ordinal_features:
 
 rare_categories:
   values: ['Neighborhood']
+  threshold: 0.01
 
 cols_to_fill:
   categorical: ['Pool QC', 'Misc Feature', 'Alley', 'Fence', 'Mas Vnr Type', 'Fireplace Qu', 'Garage Cond', 'Garage Finish', 'Garage Qual', 'Garage Type', 'Bsmt Exposure', 'BsmtFin Type 2', 'Bsmt Qual', 'Bsmt Cond', 'BsmtFin Type 1', 'Electrical', 'Utilities']

@@ -105,23 +105,23 @@ def get_metrics_and_print(y_pred_original, y_test_original):
 
 def save_test_data(config, X_test, y_test):
     joblib.dump(X_test, config['data_paths']['X_test_job'])
-    np.save(config['data_paths']['y_test_npy'], y_test)
+    joblib.dump(y_test, config['data_paths']['y_test_job'])
 
 
 def load_test_data(config):
     X_test = joblib.load(config['data_paths']['X_test_job'])
-    y_test = np.load(config['data_paths']['y_test_npy'], allow_pickle=True)
+    y_test = joblib.load(config['data_paths']['y_test_job'])
 
     return X_test, y_test.squeeze()
 
 
-def check_for_invalid_data(full_pipeline, X_train, y_train):
+def check_for_invalid_data(full_pipeline, X, y):
     preprocessing_pipeline = full_pipeline[:-1]
-    X_transformed = preprocessing_pipeline.fit_transform(X_train, y_train)
+    X_transformed = preprocessing_pipeline.fit_transform(X, y)
 
     logger.info(f'Shape {X_transformed.shape}')
     logger.info(f'NaN count: {np.isnan(X_transformed).sum()}')
-    logger.info(f'Inf count: {np.isnan(X_transformed).sum()}')
+    logger.info(f'Inf count: {np.isinf(X_transformed).sum()}')
     logger.info(f'Max value: {np.nanmax(X_transformed)}')
     logger.info(f'Min value: {np.nanmin(X_transformed)}')
 

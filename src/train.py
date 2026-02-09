@@ -19,6 +19,7 @@ from src.pipeline.lot_frontage_imputer import LotFrontageImputer
 from src.pipeline.missing_value_handler import MissingValueHandler
 from src.pipeline.multicollinearity import MultiCollinearity
 from src.pipeline.ordinal_encoder import OrdinalEncoder
+from src.pipeline.rare_category_handler import RareCategoryHandler
 from src.utils import save_test_data, parse_args_and_get_config, drop_columns
 
 logging.basicConfig(level=logging.INFO)
@@ -56,12 +57,14 @@ def train_model_and_evaluate(config):
         ('lot_frontage', LotFrontageImputer()),
         ('ordinal', OrdinalEncoder(config['ordinal_features'])),
         ('feature_engineer', FeatureEngineer(config['feature_engineer'])),
+        ('rare_category', RareCategoryHandler(config["rare_categories"])),
         ('preprocessor', ColumnTransformer([
             ('num', Pipeline([
                 ('variance', VarianceThreshold(threshold=preprocessing_config.get('variance_threshold', 0.01))),
                 ('scaler', StandardScaler())
             ]), make_column_selector(dtype_include=np.number)),
-            ('cat', OneHotEncoder(handle_unknown='ignore', drop='if_binary'), make_column_selector(dtype_include='object'))
+            ('cat', OneHotEncoder(handle_unknown='ignore', drop='if_binary'),
+             make_column_selector(dtype_include='object'))
         ])),
         ('model', model)
     ])
@@ -70,7 +73,9 @@ def train_model_and_evaluate(config):
     X_train, y_train = handle_outliers_iqr(X_train, y_train, config)
 
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore", RuntimeWarning)
+        warnings.filterwarnings("ignore",
+                                message="overflow encountered in matmul|invalid value encountered in matmul|divide by zero encountered in matmul",
+                                category=RuntimeWarning)
         full_pipeline.fit(X_train, y_train)
 
     logger.info(f'Best alpha {model.alpha_}')
