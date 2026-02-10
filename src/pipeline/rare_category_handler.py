@@ -1,5 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from src.pipeline.pipeline_util import validate_columns
+
 
 class RareCategoryHandler(BaseEstimator, TransformerMixin):
     def __init__(self, config):
@@ -7,6 +9,7 @@ class RareCategoryHandler(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         self.low_freq_ = []
+        validate_columns(X, self.config['values'], self.__class__.__name__)
         for feature in self.config['values']:
             value_counts = X[feature].value_counts()
             low_freq_mask = value_counts / len(X) < self.config.get("threshold", 0.01)
@@ -17,6 +20,7 @@ class RareCategoryHandler(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         X = X.copy()
+        validate_columns(X, self.config['values'], self.__class__.__name__)
         for feature, low_freq in self.low_freq_:
             X[feature] = X[feature].replace(low_freq, 'Other')
         return X

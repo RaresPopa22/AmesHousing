@@ -3,6 +3,8 @@ import logging
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from src.pipeline.pipeline_util import validate_columns
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -18,4 +20,5 @@ class MultiCollinearity(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        validate_columns(X, self.cols_to_drop_, self.__class__.__name__)
         return X.drop(columns=self.cols_to_drop_)

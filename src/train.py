@@ -54,7 +54,7 @@ def train_model_and_evaluate(config):
         ('feature_selection', FeatureSelection(config.get('top_20_features'))),
         ('multicollinearity', MultiCollinearity(config.get('multicollinearity', {}).get('threshold'))),
         ('missing', MissingValueHandler(config['cols_to_fill'])),
-        ('lot_frontage', LotFrontageImputer()),
+        ('lot_frontage', LotFrontageImputer(config['lot_frontage'])),
         ('ordinal', OrdinalEncoder(config['ordinal_features'])),
         ('feature_engineer', FeatureEngineer(config['feature_engineer'])),
         ('rare_category', RareCategoryHandler(config["rare_categories"])),

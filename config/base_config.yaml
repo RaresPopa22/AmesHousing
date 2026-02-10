@@ -96,3 +96,11 @@ top_20_features:
   values: ['Overall Qual', 'Total SF', 'House Age', 'Gr Liv Area', 'Lot Area', 'Years Since Remod', 'Total Bath',
         'Bsmt Unf SF', 'Garage Cars', 'Central Air_Y', 'Overall Cond', 'BsmtFin SF 1', 'Exter Qual', 'Bsmt Qual', 'Total Porch',
         'Heating QC', 'Functional', 'Kitchen Qual', 'Lot Frontage']
+
+plot_feature_importance:
+  disabled: True
+  features: 10
+
+lot_frontage:
+  neighborhood: Neighborhood
+  lot_frontage: 'Lot Frontage'

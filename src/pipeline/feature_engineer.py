@@ -1,6 +1,8 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 
+from src.pipeline.pipeline_util import validate_columns
+
 
 class FeatureEngineer(BaseEstimator, TransformerMixin):
     def __init__(self, config):
@@ -11,9 +13,12 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         X = X.copy()
+        
+        old_cols = [col for fc in self.config.values() for col in self._extract_old_column_names(fc)]
+        validate_columns(X, old_cols, self.__class__.__name__)
         columns_to_drop = []
 
-        for feature, feature_config in self.config.items():
+        for _, feature_config in self.config.items():
             X, drop_cols = self.enhance_features(X, feature_config)
             columns_to_drop.extend(drop_cols)
 
@@ -72,3 +77,16 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         operand_col = feature['operand']
         data[new_col] = (data[operand_col] > 0).astype(int)
         return data, [operand_col]
+    
+    def _extract_old_column_names(self, feature_config):
+        op_name = feature_config.get('op')
+
+        op_dict = {
+            'sum': lambda x: x['old'],
+            'weighted_sum': lambda x: pd.Series(x['old']).index,
+            'difference': lambda x: [x['minuend'], x['subtrahend']],
+            'unequal': lambda x: [x['first_operand'], x['second_operand']],
+            'greater_than_zero': lambda x: [x['operand']]
+        }
+
+        return op_dict[op_name](feature_config)
