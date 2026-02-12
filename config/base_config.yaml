@@ -25,7 +25,14 @@ ordinal_features:
   Fence: ['None', 'MnWw', 'GdWo', 'MnPrv', 'GdPrv']
 
 rare_categories:
-  values: ['Neighborhood']
+  values: [
+    'MS Zoning', 'Street', 'Utilities', 'Lot Config',
+    'Neighborhood', 'Condition 1', 'Condition 2',
+    'House Style', 'Roof Style', 'Roof Matl',
+    'Exterior 1st', 'Exterior 2nd', 'Mas Vnr Type',
+    'Foundation', 'Heating', 'Electrical',
+    'Garage Type', 'Misc Feature', 'Sale Type', 'Sale Condition'
+  ]
   threshold: 0.01
 
 cols_to_fill:
