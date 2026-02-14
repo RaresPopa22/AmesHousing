@@ -52,6 +52,7 @@ def sample_cat_and_num_data(sample_categorical_data, sample_numerical_data):
 
 @pytest.fixture
 def sample_clean_cat_and_num_data():
+    np.random.seed(1)
     n_samples = 2
 
     cat = pd.DataFrame({
@@ -69,3 +70,41 @@ def sample_clean_cat_and_num_data():
     config = {'categorical': categorical_cols, 'numerical': numerical_cols}
 
     return df, config
+
+
+@pytest.fixture
+def sample_ordinal_data():
+    np.random.seed(1)
+    n = 5
+    lot_shape_list =  ['IR3', 'IR2', 'IR1', 'Reg']
+    land_slope_list = ['Gtl', 'Mod', 'Sev']
+
+    config = {
+        'Lot Shape': lot_shape_list,
+        'Land Slope': land_slope_list
+    }
+
+    data = pd.DataFrame({
+        'Lot Shape': np.random.choice(lot_shape_list, n),
+        'Land Slope': np.random.choice(land_slope_list, n)
+    })
+
+    return data, config
+
+@pytest.fixture
+def sample_ordinal_unseen_data():
+    np.random.seed(1)
+    lot_shape_list =  ['IR3', 'IR2', 'IR1', 'Reg']
+    land_slope_list = ['Gtl', 'Mod', 'Sev']
+
+    config = {
+        'Lot Shape': lot_shape_list,
+        'Land Slope': land_slope_list
+    }
+
+    data = pd.DataFrame({
+        'Lot Shape': ['IR3', 'IR2', 'IR1', 'Reg'],
+        'Land Slope': ['Gtl', 'Mod', 'Mod', 'Unseen']
+    })
+
+    return data, config

@@ -39,4 +39,13 @@ class TestMissingValueHandler:
         res = handler.transform(df)
         pd.testing.assert_frame_equal(df, res)
 
+    def test_validate_columns(self, sample_clean_cat_and_num_data):
+        df, config = sample_clean_cat_and_num_data
+        config = config.copy()
+        cat = config.get('categorical')
+        cat.append('not_in_X')
 
+        handler = MissingValueHandler(config)
+
+        with pytest.raises(ValueError, match=r"(?i)(?=.*MissingValueHandler)(?=.*not_in_X)"):
+            res = handler.transform(df)
