@@ -5,6 +5,8 @@ from src.pipeline.pipeline_util import validate_columns
 
 class RareCategoryHandler(BaseEstimator, TransformerMixin):
     def __init__(self, config):
+        if 'values' not in config:
+            raise ValueError('RareCategoryHandler config missing required key: values')
         self.config = config
 
     def fit(self, X, y=None):
@@ -13,8 +15,9 @@ class RareCategoryHandler(BaseEstimator, TransformerMixin):
         for feature in self.config['values']:
             value_counts = X[feature].value_counts()
             low_freq_mask = value_counts / len(X) < self.config.get("threshold", 0.01)
-            low_freq = value_counts[low_freq_mask].index
-            self.low_freq_.append((feature, low_freq))
+            if low_freq_mask.any():
+                low_freq = value_counts[low_freq_mask].index
+                self.low_freq_.append((feature, low_freq))
 
         return self
 

@@ -5,6 +5,10 @@ from src.pipeline.pipeline_util import validate_columns
 
 class MissingValueHandler(BaseEstimator, TransformerMixin):
     def __init__(self, config):
+        required = ('categorical', 'numerical')
+        missing = [k for k in required if k not in config]
+        if missing:
+            raise ValueError(f'MissingValueHandler config missing required key(s): {missing}')
         self.config = config
 
     def fit(self, X, y=None):
