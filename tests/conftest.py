@@ -75,7 +75,7 @@ def sample_clean_cat_and_num_data():
 @pytest.fixture
 def sample_ordinal_data():
     np.random.seed(1)
-    n = 5
+    n_samples = 5
     lot_shape_list =  ['IR3', 'IR2', 'IR1', 'Reg']
     land_slope_list = ['Gtl', 'Mod', 'Sev']
 
@@ -85,8 +85,8 @@ def sample_ordinal_data():
     }
 
     data = pd.DataFrame({
-        'Lot Shape': np.random.choice(lot_shape_list, n),
-        'Land Slope': np.random.choice(land_slope_list, n)
+        'Lot Shape': np.random.choice(lot_shape_list, n_samples),
+        'Land Slope': np.random.choice(land_slope_list, n_samples)
     })
 
     return data, config
@@ -108,3 +108,39 @@ def sample_ordinal_unseen_data():
     })
 
     return data, config
+
+@pytest.fixture
+def sample_rare_category_data():
+    np.random.seed(1)
+    n_samples = 99
+    config = {
+        'values': ['Street']
+    }
+
+    streets = ['Main Street', 'Boulevard']
+
+    data = pd.DataFrame({
+        'Street': np.random.choice(streets, n_samples)
+    })
+
+    data.loc[len(data), 'Street'] = 'Tiny little street'
+    data.loc[len(data), 'Street'] = 'Unknown street'
+
+    return data, config
+
+@pytest.fixture
+def sample_rare_category_data_no_outlier():
+    np.random.seed(1)
+    n_samples = 100
+    streets = ['Main Street', 'Boulevard']
+    config = {
+        'values': ['Street']
+    }
+
+    data = pd.DataFrame({
+        'Street': np.random.choice(streets, n_samples)
+    })
+
+    return data, config
+
+    
