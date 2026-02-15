@@ -36,13 +36,10 @@ class TestOrdinalEncoder:
             encoder.transform(df)
 
     def test_validate_columns(self, sample_ordinal_data):
-        df, config = sample_ordinal_data
-        config = config.copy()
-        config['Fence'] = ['MnWw']
+        df = pd.DataFrame({})
+        encoder = OrdinalEncoder({'not_in_X': [1, 2, 3]})
 
-        encoder = OrdinalEncoder(config)
-
-        with pytest.raises(ValueError, match=r"(?i)(?=.*OrdinalEncoder)(?=.*Fence)"):
+        with pytest.raises(ValueError, match=r"(?i)(?=.*OrdinalEncoder)(?=.*not_in_X)"):
             encoder.transform(df)
 
     def test_pass_through(self, sample_ordinal_data):

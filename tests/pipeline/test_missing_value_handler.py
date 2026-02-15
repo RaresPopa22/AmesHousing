@@ -24,13 +24,9 @@ class TestMissingValueHandler:
             handler = MissingValueHandler(config)
             res = handler.transform(df)
 
-    def test_missing_mandatory_type(self, sample_cat_and_num_data):
-        df, config = sample_cat_and_num_data
-        config = config.copy()
-        config.pop('categorical')
-        with pytest.raises(TypeError):
-            handler = MissingValueHandler(config)
-            res = handler.transform(df)
+    def test_missing_mandatory_type(self):
+        with pytest.raises(ValueError, match=r"(?i)(?=.*categorical)(?=.*numerical)"):
+            handler = MissingValueHandler({})
 
     def test_passthrough(self, sample_clean_cat_and_num_data):
         df, config = sample_clean_cat_and_num_data
@@ -39,12 +35,9 @@ class TestMissingValueHandler:
         res = handler.transform(df)
         pd.testing.assert_frame_equal(df, res)
 
-    def test_validate_columns(self, sample_clean_cat_and_num_data):
-        df, config = sample_clean_cat_and_num_data
-        config = config.copy()
-        cat = config.get('categorical')
-        cat.append('not_in_X')
-
+    def test_validate_columns(self):
+        df = pd.DataFrame({})
+        config = {'categorical': ['not_in_X'], 'numerical': ['Mas Vnr Area']}
         handler = MissingValueHandler(config)
 
         with pytest.raises(ValueError, match=r"(?i)(?=.*MissingValueHandler)(?=.*not_in_X)"):
