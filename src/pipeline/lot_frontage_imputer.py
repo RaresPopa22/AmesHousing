@@ -4,7 +4,12 @@ from src.pipeline.pipeline_util import validate_columns
 
 
 class LotFrontageImputer(BaseEstimator, TransformerMixin):
-    def __init__(self, config) -> None:
+    def __init__(self, config):
+        required = ('neighborhood', 'lot_frontage')
+        missing = [k for k in required if k not in config]
+        if missing:
+            raise ValueError(f'LotFrontageImputer config missing required key(s): {missing}')
+        
         self.config = config
         self.neighborhood = self.config.get('neighborhood')
         self.lot_frontage = self.config.get('lot_frontage')

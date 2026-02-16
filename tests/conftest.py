@@ -143,4 +143,175 @@ def sample_rare_category_data_no_outlier():
 
     return data, config
 
+@pytest.fixture
+def sample_lot_frontage():
+    np.random.seed(1)
+    n_samples = 100
+    config = {
+        'neighborhood': 'Neighborhood',
+        'lot_frontage': 'Lot Frontage'
+    }
+
+    data = pd.DataFrame({
+        'Neighborhood': ['BrkSide', 'BrkSide', 'BrkSide', 'NoRidge', 'NoRidge', 'NoRidge'],
+        'Lot Frontage': [90, 100, 110, 190, 200, 210]
+    })
+
+    return data, config
+
+@pytest.fixture
+def sample_lot_frontage_with_nan():
+    np.random.seed(1)
+    n_samples = 100
+    config = {
+        'neighborhood': 'Neighborhood',
+        'lot_frontage': 'Lot Frontage'
+    }
+
+    data = pd.DataFrame({
+        'Neighborhood': ['BrkSide', 'BrkSide', 'BrkSide', 'BrkSide', 'NoRidge', 'NoRidge', 'NoRidge', 'NoRidge', 'Mitchel'],
+        'Lot Frontage': [90, 100, 110, np.nan, 190, 200, 210, np.nan, np.nan]
+    })
+
+    return data, config
     
+@pytest.fixture
+def sample_feature_engineer():
+    np.random.seed(1)
+    n_samples = 100
+    config = {
+            'surface': {
+                'op': 'sum',
+                'new_name': 'Total SF',
+                'old': ['Total Bsmt SF', '1st Flr SF']
+            },
+            'age': {
+                'op': 'difference',
+                'new_name': 'House Age',
+                'minuend': 'Yr Sold',
+                'subtrahend': 'Year Built'
+            },
+            'bath': {
+                'op': 'weighted_sum',
+                'new_name': 'Total Bath',
+                'old': {'Full Bath': 1, 'Half Bath': 0.5}
+            },
+            'was_remod': {
+                'op': 'unequal',
+                'new_name': 'Was Remodeled',
+                'first_operand': 'Year Remod/Add',
+                'second_operand': 'Year Built'
+            },
+            'has_pool': {
+                'op': 'greater_than_zero',
+                'new_name': 'Has Pool',
+                'operand': 'Pool Area'
+            }
+        }
+    
+    cols_to_drop = ['Total Bsmt SF', '1st Flr SF', 'Yr Sold', 'Year Built', 'Full Bath', 'Half Bath', 'Year Remod/Add', 'Year Built', 'Pool Area']
+    new_names = ['Total SF', 'House Age', 'Total Bath', 'Was Remodeled', 'Has Pool']
+    
+    data = pd.DataFrame({
+        'Total Bsmt SF': [5, 5, 5],
+        '1st Flr SF': [3, 3, 4],
+        'Yr Sold': [2020, 2010, 2000],
+        'Year Built': [2015, 2000, 1970],
+        'Full Bath': [10, 5, 1],
+        'Half Bath': [4, 2, 0],
+        'Year Remod/Add': [2015, 2005, 1990],
+        'Pool Area': [15, 0, 10]
+    })
+
+    return data, config, cols_to_drop, new_names
+
+@pytest.fixture
+def sample_sum_data():
+    config = {
+            'op': 'sum',
+            'new_name': 'Total SF',
+            'old': ['Total Bsmt SF', '1st Flr SF']
+        }
+    
+    data = pd.DataFrame({
+        'Total Bsmt SF': [5, 5, 5],
+        '1st Flr SF': [3, 3, 4],
+    })
+
+    return data, config, config.get('old')
+
+@pytest.fixture
+def sample_sum_with_nan_data():
+    config = {
+            'op': 'sum',
+            'new_name': 'Total SF',
+            'old': ['Total Bsmt SF', '1st Flr SF']
+        }
+    
+    data = pd.DataFrame({
+        'Total Bsmt SF': [5, 5, 5],
+        '1st Flr SF': [3, 3, np.nan],
+    })
+
+    return data, config, config.get('old')
+
+@pytest.fixture
+def sample_weighted_sum_data():
+    config = {
+        'op': 'weighted_sum',
+        'new_name': 'Total Bath',
+        'old': {'Full Bath': 1, 'Half Bath': 0.5}
+    }
+
+    data = pd.DataFrame({
+        'Full Bath': [10, 5, 1],
+        'Half Bath': [4, 2, 0],
+    })
+
+    return data, config, [*config.get('old')]
+
+@pytest.fixture
+def sample_difference_data():
+    config = {
+        'op': 'difference',
+        'new_name': 'House Age',
+        'minuend': 'Yr Sold',
+        'subtrahend': 'Year Built'
+    }
+
+    data = pd.DataFrame({
+        'Yr Sold': [2020, 2010, 2000],
+        'Year Built': [2015, 2000, 1970],
+    })
+
+    return data, config, [config.get('minuend'), config.get('subtrahend')]
+
+@pytest.fixture
+def sample_unequal_data():
+    config = {
+        'op': 'unequal',
+        'new_name': 'Was Remodeled',
+        'first_operand': 'Year Remod/Add',
+        'second_operand': 'Year Built'
+    }
+
+    data = pd.DataFrame({
+        'Year Built': [2015, 2000, 1970],
+        'Year Remod/Add': [2015, 2005, 1990]
+    })
+
+    return data, config, [config.get('first_operand'), config.get('second_operand')]
+
+@pytest.fixture
+def sample_greater_than_zero_data():
+    config = {
+        'op': 'greater_than_zero',
+        'new_name': 'Has Pool',
+        'operand': 'Pool Area'
+    }
+
+    data = pd.DataFrame({
+        'Pool Area': [15, 0, 10]
+    })
+
+    return data, config, [config.get('operand')]
