@@ -253,6 +253,20 @@ def sample_sum_with_nan_data():
         '1st Flr SF': [3, 3, np.nan],
     })
 
+    return data, config
+
+@pytest.fixture
+def sample_sum_with_one_col():
+    config = {
+        'op': 'sum',
+        'new_name': 'Total SF',
+        'old': ['Total Bsmt SF']
+    }
+
+    data = pd.DataFrame({
+        'Total Bsmt SF': [5, 5, 5],
+    })
+
     return data, config, config.get('old')
 
 @pytest.fixture
@@ -315,3 +329,45 @@ def sample_greater_than_zero_data():
     })
 
     return data, config, [config.get('operand')]
+
+@pytest.fixture
+def sample_multicollinearity_data():
+    X = pd.DataFrame({
+        'A': [1, 2, 3, 4, 5],
+        'A_2': [1, 2, 3, 4, 5],
+        'B': [1, 2, 3, 4, 6],
+        'C_83': [1, 2, 3, 4, 3],
+        'D_79': [1, 2, 2, 2, 7],
+        'E': [7, 8, 1, 8, 0]
+    })
+
+    y = pd.Series([1, 2, 3, 4, 5])
+
+    return X, y
+
+@pytest.fixture
+def sample_multicollinearity_tie_data():
+    X = pd.DataFrame({
+        'A': [1, 2, 3, 4, 5],
+        'B': [1.1, 2.1, 3.1, 4.1, 5.1],
+    })
+
+    y = pd.Series([1, 2, 3, 4, 5])
+
+    return X, y
+
+@pytest.fixture
+def sample_multicollinearity_data_changed():
+    X = pd.DataFrame({
+        'A': [1, 2, 3, 4, 5],
+        'A_2': [1, 2, 3, 4, 5],
+        'B': [1, 2, 3, 4, 6],
+        'C_83': [1, 2, 3, 4, 3],
+        'D_79': [1, 2, 2, 2, 7],
+        'E': [7, 8, 1, 8, 0]
+    })
+
+    y = pd.Series([1, 2, 3, 4, 5])
+    X_c = X.drop(columns=['A_2', 'B'])
+
+    return X, y, X_c

@@ -73,13 +73,21 @@ class TestFeatureEngineer:
         assert actual_old == old_columns
 
     def test_sum_with_nan(self, sample_sum_with_nan_data):
-        data, config, old_columns = sample_sum_with_nan_data
+        # panda sum(axis=1) skips nan by default
+        data, config = sample_sum_with_nan_data
         handler = FeatureEngineer({})
-        res, actual_old = handler._sum_features(data, config)
+        res, _ = handler._sum_features(data, config)
 
         assert not res['Total SF'].isna().any()
         assert res['Total SF'].tolist() == [8, 8, 5]
-        print(res)
+
+    def test_sum_one_col(self, sample_sum_with_one_col):
+        data, config, old_columns = sample_sum_with_one_col
+        handler = FeatureEngineer({})
+        res, actual_old = handler._sum_features(data, config)
+
+        assert res['Total SF'].tolist() == [5, 5, 5]
+        assert actual_old == old_columns
 
     def test_sum_weighted_sum_happy_path(self, sample_weighted_sum_data):
         data, config, old_columns = sample_weighted_sum_data
