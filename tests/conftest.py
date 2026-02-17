@@ -371,3 +371,22 @@ def sample_multicollinearity_data_changed():
     X_c = X.drop(columns=['A_2', 'B'])
 
     return X, y, X_c
+
+@pytest.fixture
+def sample_feature_selection():
+    config = {
+        'apply': True,
+        'values': ['Total Bsmt SF', '1st Flr SF', 'Yr Sold']
+    }
+
+    data = pd.DataFrame({
+        'Total Bsmt SF': [5, 5, 5],
+        '1st Flr SF': [3, 3, 4],
+        'Yr Sold': [2020, 2010, 2000],
+        'Year Built': [2015, 2000, 1970],
+        'Full Bath': [10, 5, 1]
+    })
+
+    return data, config
+
+
