@@ -102,6 +102,8 @@ def get_metrics_and_print(y_pred_original, y_test_original):
     logger.info(f"Mean Absolute Error (MAE): ${mae:,.3f}")
     logger.info(f"Root Mean Squared Error (RMSE): ${rmse:,.3f}")
 
+    return r2, mae, rmse
+
 
 def save_test_data(config, X_test, y_test):
     joblib.dump(X_test, config['data_paths']['X_test_job'])
