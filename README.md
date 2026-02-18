@@ -109,7 +109,7 @@ In order to train a model, run the `train.py` script with the desired configurat
 * Train RidgeCV
     `python -m src.train --config config/ridge_cv.yaml`
 * Train LassoCV
-    `python -m src.train --config config/lasso_cv.yam`
+    `python -m src.train --config config/lasso_cv.yaml`
 * Train ElasticNetCV
     `python -m src.train --config config/elastic_net_cv.yaml`
 

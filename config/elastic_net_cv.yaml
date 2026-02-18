@@ -2,4 +2,14 @@ model_name: 'elastic_net_cv'
 
 model_output_paths:
   dir: 'models'
-  model: 'models/elastic_net_cv.joblib'
+  model: 'elastic_net_cv.joblib'
+  pipeline: 'elastic_net_cv_pipeline.joblib'
+
+preprocessing:
+  test_size: 0.2
+  variance_threshold: 0.01
+  logspace:
+    start: -3
+    end: 3
+    num: 100
+  cv: 5
