@@ -58,7 +58,9 @@ def evaluate_models(base_config, model_paths):
         pipeline = joblib.load(model_path)
 
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RuntimeWarning)
+            warnings.filterwarnings("ignore",
+                                message="overflow encountered in matmul|invalid value encountered in matmul|divide by zero encountered in matmul",
+                                category=RuntimeWarning)
             y_pred_log = pipeline.predict(X_test)
 
         y_pred_original = np.expm1(y_pred_log)
