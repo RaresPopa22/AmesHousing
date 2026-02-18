@@ -6,13 +6,13 @@ import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.utils import load_test_data, parse_args_and_get_config, evaluate_pipeline, check_for_invalid_data
+from src.utils import load_test_data, parse_args_and_get_config, evaluate_pipeline
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def plot_feature_importance(pipelines, config):
+def plot_feature_importance(pipelines, config, model_paths):
     feature_config = config.get('plot_feature_importance', {})
     if feature_config.get('disabled', True):
         return
@@ -66,7 +66,7 @@ def evaluate_models(base_config, model_paths):
         model_names.append(model_path.stem)
         pipelines.append((pipeline, model_path.stem))
 
-    plot_feature_importance(pipelines, base_config)
+    plot_feature_importance(pipelines, base_config, model_paths)
     evaluate_pipeline(predictions, y_test_original, model_names)
 
 
