@@ -138,8 +138,8 @@ def parse_args_and_get_config(stage):
         return read_configs(base_config, args.config)
     elif stage == 'evaluate':
         parser.add_argument('--models', nargs="+", required=True, help='Paths to model files')
-        parser.add_argument('--x-test', required=True, help='Paths to X_test_scaled.csv')
-        parser.add_argument('--y-test', required=True, help='Paths to y_test.csv')
+        parser.add_argument('--x-test', required=True, help='Paths to X_test.npy')
+        parser.add_argument('--y-test', required=True, help='Paths to y_test.npy')
         args = parser.parse_args()
         return read_config(base_config), args.models
     else:
