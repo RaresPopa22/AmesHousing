@@ -23,7 +23,7 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
             columns_to_drop.extend(drop_cols)
 
         unique_columns_to_drop = set(columns_to_drop)
-        X = X.drop(columns=unique_columns_to_drop, axis=1)
+        X = X.drop(columns=unique_columns_to_drop)
 
         return X
 
